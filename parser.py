@@ -58,6 +58,6 @@ def choose_action():
   elif(args.action == 'get_tls_all'):
     get_all_tls_notAfter(args)
   else:
-    print("action not found")
+    raise ValueError("action (first argument) not found")
 
 choose_action()
