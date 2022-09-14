@@ -13,7 +13,10 @@ def parse_input():
   args = parser.parse_args()
   return args
 
-def output_formatting(table):
+def output_formatting(header, data):
+  table = [data]
+  table.insert(0, header)
+
   col_width = max(len(word) for row in table for word in row) + 2  # padding
   for row in table:
     print("".join(word.ljust(col_width) for word in row))
@@ -26,11 +29,9 @@ def get_tls_notAfter(args):
   ssl_date_fmt = r'%Y%m%d%H%M%SZ'
   result = datetime.datetime.strptime(x509.get_notAfter().decode('ascii'), ssl_date_fmt)
 
-  table =[
-    ['SECRET', 'NAME', 'DATEBEFORE'],
-    [args.name, args.namespace, str(result)]
-  ]
-  output_formatting(table)
+  header = ['SECRET', 'NAME', 'DATEBEFORE']
+  data = [args.name, args.namespace, str(result)]
+  output_formatting(header, data)
 
 def choose_action():
   args = parse_input()
