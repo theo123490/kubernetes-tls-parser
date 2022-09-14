@@ -29,6 +29,10 @@ def get_tls_notAfter(args):
   ssl_date_fmt = r'%Y%m%d%H%M%SZ'
   result = datetime.datetime.strptime(x509.get_notAfter().decode('ascii'), ssl_date_fmt)
 
+  return result
+
+def get_single_tls_notAfter(args):
+  result = get_tls_notAfter(args)
   header = ['SECRET', 'NAME', 'DATEBEFORE']
   data = [args.name, args.namespace, str(result)]
   output_formatting(header, data)
@@ -36,7 +40,7 @@ def get_tls_notAfter(args):
 def choose_action():
   args = parse_input()
   if(args.action == 'get_tls'):
-    get_tls_notAfter(args)
+    get_single_tls_notAfter(args)
   else:
     print("action not found")
 
