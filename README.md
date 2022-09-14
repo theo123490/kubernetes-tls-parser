@@ -3,6 +3,12 @@
 ---
 # how to run
 
+## decode_x509
+decode x509 using `openssl x509 -text`
+```bash
+python parser.py decode_x509 $SECRET_NAME -n $NAMESPACE
+```
+this should show the details of the x509 certificate
 ## get_tls
 getting expiry date for previous tls
 ```bash

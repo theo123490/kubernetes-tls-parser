@@ -64,12 +64,26 @@ def get_all_tls_notAfter(args):
   header = ['SECRET', 'NAMESPACE', 'DATEBEFORE', 'CN']
   output_formatting(header, data)
 
+def decode_x509(args):
+  certificate = get_certificate(args)
+  openssl_args = ["openssl", "x509", "-text"]
+  child_proccess = subprocess.Popen(openssl_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+
+  child_proccess.stdin.write(certificate)
+  child_process_output = child_proccess.communicate()[0]
+
+  child_proccess.stdin.close()
+
+  print(child_process_output.decode('utf-8'))
+
 def choose_action():
   args = parse_input()
   if(args.action == 'get_tls'):
     get_single_tls_notAfter(args)
   elif(args.action == 'get_tls_all'):
     get_all_tls_notAfter(args)
+  elif(args.action == 'decode_x509'):
+    decode_x509(args)
   else:
     raise ValueError("action (first argument) not found")
 
