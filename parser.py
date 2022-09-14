@@ -21,10 +21,14 @@ def output_formatting(header, data):
   for row in table:
     print("".join(word.ljust(col_width) for word in row))
 
-def get_tls_notAfter(args):
+def get_certificate(args):
   input_string = subprocess.check_output(["kubectl", "get", "secret", args.name , "-o", "yaml", "-n", args.namespace])
   secret_yaml = yaml.safe_load(input_string)
   certificate = base64.b64decode(secret_yaml["data"]["tls.crt"])
+  return certificate
+
+def get_tls_notAfter(args):
+  certificate = get_certificate(args)
   x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, certificate)
   ssl_date_fmt = r'%Y%m%d%H%M%SZ'
   date_time = datetime.datetime.strptime(x509.get_notAfter().decode('ascii'), ssl_date_fmt)
