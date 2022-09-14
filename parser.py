@@ -10,6 +10,7 @@ def parse_input():
   parser.add_argument('action')
   parser.add_argument('name' , nargs='?', const="default_name",)
   parser.add_argument("-n", "--namespace", help="namespace")
+  parser.add_argument('-v', '--verbose', action='count', default=0)
   args = parser.parse_args()
   return args
 
@@ -44,13 +45,15 @@ def get_all_tls_notAfter(args):
   secret_array = [line.decode('utf-8').split() for line in output.splitlines()]
   data = []
   for secret_line in secret_array:
-    print(f"getting data from {secret_line[1]} on {secret_line[0]} ")
+    if(args.verbose>0):
+      print(f"getting data from {secret_line[1]} on {secret_line[0]} ")
     args.namespace = secret_line[0]
     args.name = secret_line[1]
     data.append([args.name, args.namespace, str(get_tls_notAfter(args))])
 
   header = ['SECRET', 'NAMESPACE', 'DATEBEFORE']
   output_formatting(header, data)
+
 def choose_action():
   args = parse_input()
   if(args.action == 'get_tls'):
