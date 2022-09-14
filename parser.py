@@ -17,7 +17,6 @@ def parse_input():
 def output_formatting(header, data):
   table = data
   table.insert(0, header)
-
   col_width = max(len(word) for row in table for word in row) + 2  # padding
   for row in table:
     print("".join(word.ljust(col_width) for word in row))
@@ -28,14 +27,20 @@ def get_tls_notAfter(args):
   certificate = base64.b64decode(secret_yaml["data"]["tls.crt"])
   x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, certificate)
   ssl_date_fmt = r'%Y%m%d%H%M%SZ'
-  result = datetime.datetime.strptime(x509.get_notAfter().decode('ascii'), ssl_date_fmt)
-
-  return result
+  date_time = datetime.datetime.strptime(x509.get_notAfter().decode('ascii'), ssl_date_fmt)
+  date_time = str(date_time)
+  CN = x509.get_subject().CN
+  CN = str(CN)
+  parsed_cert = {
+    'date_time': date_time,
+    'CN': CN
+    }
+  return parsed_cert
 
 def get_single_tls_notAfter(args):
-  result = get_tls_notAfter(args)
-  header = ['SECRET', 'NAMESPACE', 'DATEBEFORE']
-  data = [args.name, args.namespace, str(result)]
+  parsed_cert = get_tls_notAfter(args)
+  header = ['SECRET', 'NAMESPACE', 'DATEBEFORE', 'CN']
+  data = [args.name, args.namespace, parsed_cert['date_time'], parsed_cert['CN']]
   output_formatting(header, [data])
 
 def get_all_tls_notAfter(args):
@@ -49,9 +54,10 @@ def get_all_tls_notAfter(args):
       print(f"getting data from {secret_line[1]} on {secret_line[0]} ")
     args.namespace = secret_line[0]
     args.name = secret_line[1]
-    data.append([args.name, args.namespace, str(get_tls_notAfter(args))])
+    parsed_cert = get_tls_notAfter(args)
+    data.append([args.name, args.namespace, parsed_cert['date_time'], parsed_cert['CN']])
 
-  header = ['SECRET', 'NAMESPACE', 'DATEBEFORE']
+  header = ['SECRET', 'NAMESPACE', 'DATEBEFORE', 'CN']
   output_formatting(header, data)
 
 def choose_action():
