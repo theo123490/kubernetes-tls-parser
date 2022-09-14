@@ -1,5 +1,4 @@
 import subprocess
-from webbrowser import get
 import yaml
 import base64
 import OpenSSL
@@ -8,6 +7,7 @@ import datetime
 
 def parse_input():
   parser = argparse.ArgumentParser()
+  parser.add_argument('action')
   parser.add_argument('name')
   parser.add_argument("-n", "--namespace", help="namespace")
   args = parser.parse_args()
@@ -32,5 +32,11 @@ def get_tls_notAfter(args):
   ]
   output_formatting(table)
 
-args = parse_input()
-get_tls_notAfter(args)
+def choose_action():
+  args = parse_input()
+  if(args.action == 'get_tls'):
+    get_tls_notAfter(args)
+  else:
+    print("action not found")
+
+choose_action()
