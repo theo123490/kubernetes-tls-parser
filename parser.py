@@ -7,10 +7,10 @@ import datetime
 
 def parse_input():
   parser = argparse.ArgumentParser()
-  parser.add_argument('action')
-  parser.add_argument('name' , nargs='?', const="default_name",)
+  parser.add_argument('action',  help="possible actions: get_tls, get_tls_all, decode_x509")
+  parser.add_argument('name' , nargs='?', const="default_name", help="secret name")
   parser.add_argument("-n", "--namespace", help="namespace")
-  parser.add_argument('-v', '--verbose', action='count', default=0)
+  parser.add_argument('-v', '--verbose', action='count', default=0, help="verbose")
   args = parser.parse_args()
   return args
 
